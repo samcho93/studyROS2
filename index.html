@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROS 2 쉽게 배우기</title>
+  <meta name="description" content="브라우저에서 바로 실습하는 ROS 2 강좌 — 노드·토픽·서비스·액션부터 TF, URDF, Nav2, MoveIt 2, SO-ARM101, Unitree Go2 까지">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🤖</text></svg>">
+  <link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script>
+    // 첫 화면이 깜빡이지 않도록 테마를 먼저 적용
+    (function () {
+      try { var t = localStorage.getItem('r2:theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/diagram.css">
+  <link rel="stylesheet" href="css/slides.css">
+  <link rel="stylesheet" href="css/widgets.css">
+  <link rel="stylesheet" href="css/ros.css">
+  <link rel="stylesheet" href="css/w-mobile.css">
+  <link rel="stylesheet" href="css/w-arm.css">
+  <link rel="stylesheet" href="css/w-go2.css">
+  <link rel="stylesheet" href="css/w-concept.css">
+</head>
+<body>
+  <!-- 모든 그림(SVG)이 함께 쓰는 화살표 머리 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+      <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-blue"/></marker>
+      <marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-teal"/></marker>
+      <marker id="arr-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-orange"/></marker>
+      <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-red"/></marker>
+      <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-green"/></marker>
+      <marker id="arr-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-purple"/></marker>
+    </defs>
+  </svg>
+
+  <div id="app" class="layout">
+    <!-- ========== 왼쪽: 목차 ========== -->
+    <aside id="nav" class="nav">
+      <div class="brand">
+        <a class="brand-logo" href="#home" title="처음 화면">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="currentColor" opacity=".16"/><g fill="currentColor"><circle cx="11" cy="11" r="4"/><circle cx="20" cy="11" r="4"/><circle cx="29" cy="11" r="4"/><circle cx="11" cy="20" r="4"/><circle cx="20" cy="20" r="4"/><circle cx="29" cy="20" r="4" opacity=".35"/><circle cx="11" cy="29" r="4" opacity=".35"/><circle cx="20" cy="29" r="4"/><circle cx="29" cy="29" r="4" opacity=".35"/></g></svg>
+        </a>
+        <div class="brand-text">
+          <div class="brand-title">ROS 2</div>
+          <div class="brand-sub">브라우저에서 실습하며 배우기</div>
+        </div>
+        <button id="themeBtn" class="icon-btn" title="라이트/다크 전환" aria-label="테마 전환">◐</button>
+        <button id="navCloseBtn" class="icon-btn nav-close" title="메뉴 접기" aria-label="메뉴 접기">⟨</button>
+      </div>
+      <div class="role-switch" role="group" aria-label="보기 대상">
+        <button data-role="student" title="학생용: 그림과 도표가 있는 문서형 강좌 + 퀴즈">🎓 학생용</button>
+        <button data-role="teacher" title="강사용: PPT 슬라이드 + 판서 + 강의 노트 + 정답">🧑‍🏫 강사용</button>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>학습 진도</span><span id="progressText">0 / 0</span></div>
+        <div class="progress"><div id="progressBar" class="progress-fill"></div></div>
+      </div>
+      <input id="navSearch" class="nav-search" type="search" placeholder="검색 (예: 토픽, TF, Nav2, MoveIt)">
+      <nav id="navTree" class="nav-tree" aria-label="강좌 목차"></nav>
+      <div class="nav-foot">
+        <a href="https://github.com/samcho93/studyROS2" target="_blank" rel="noopener">GitHub</a>
+        <span>·</span>
+        <span id="navFootRole"></span>
+      </div>
+    </aside>
+
+    <!-- ========== 가운데: 강좌 (문서 / 슬라이드) ========== -->
+    <main id="center" class="center">
+      <div class="topbar">
+        <button id="navOpenBtn" class="icon-btn nav-open" title="메뉴 펼치기" aria-label="메뉴 펼치기">☰</button>
+        <div id="crumb" class="crumb"></div>
+        <span class="spacer"></span>
+        <div class="view-switch" role="group" aria-label="보기 방식">
+          <button data-view="doc" title="문서 보기">📄 문서</button>
+          <button data-view="slides" title="슬라이드 보기 (PPT)">🖼️ 슬라이드</button>
+        </div>
+        <button id="prevBtn" class="btn ghost small" title="이전 장">◀</button>
+        <button id="nextBtn" class="btn ghost small" title="다음 장">▶</button>
+      </div>
+
+      <!-- 문서 보기 -->
+      <div id="docView" class="doc-view">
+        <div id="content" class="content" tabindex="-1"></div>
+      </div>
+
+      <!-- 슬라이드 보기 -->
+      <div id="slideView" class="slide-view hidden"></div>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-head"><b id="modalTitle"></b><span class="spacer"></span><button id="modalClose" class="icon-btn" aria-label="닫기">✕</button></div>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/course.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/ros-msgs.js"></script>
+  <script src="js/ros.js"></script>
+  <script src="js/ros-ui.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/ros-pkgs.js"></script>
+  <script src="js/ros-term.js"></script>
+  <script src="js/pyros.js"></script>
+  <script src="js/py-examples.js"></script>
+  <script src="js/vendor/so101-kinematics.js"></script>
+  <script src="js/vendor/robot-canvas.js"></script>
+  <script src="js/w/core.js"></script>
+  <script src="js/w/mobile.js"></script>
+  <script src="js/w/rviz.js"></script>
+  <script src="js/w/arm.js"></script>
+  <script src="js/w/urdf.js"></script>
+  <script src="js/w/go2.js"></script>
+  <script src="js/w/bridge.js"></script>
+  <script src="js/w/microros.js"></script>
+  <script src="js/w/vision.js"></script>
+  <script src="js/w/concept.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/ink.js"></script>
+  <script src="js/slides.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

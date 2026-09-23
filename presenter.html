@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>발표자 창 · ROS 2</title>
+  <link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/diagram.css">
+  <link rel="stylesheet" href="css/slides.css">
+  <link rel="stylesheet" href="css/widgets.css">
+  <link rel="stylesheet" href="css/ros.css">
+  <link rel="stylesheet" href="css/w-mobile.css">
+  <link rel="stylesheet" href="css/w-arm.css">
+  <link rel="stylesheet" href="css/w-go2.css">
+  <link rel="stylesheet" href="css/w-concept.css">
+  <style>
+    body { background: #10141a; color: #e3e8f0; overflow: hidden; }
+    .pv { display: grid; grid-template-columns: 1.55fr 1fr; grid-template-rows: auto 1fr auto; gap: 14px; height: 100vh; padding: 14px; box-sizing: border-box; }
+    .pv-top { grid-column: 1 / 3; display: flex; align-items: center; gap: 14px; }
+    .pv-top h1 { font-size: 16px; margin: 0; font-weight: 600; color: #aab4c4; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pv-clock { font: 700 34px var(--mono); color: #7ee787; cursor: pointer; }
+    .pv-clock.paused { color: #f2c14e; }
+    .pv-now { font: 500 14px var(--mono); color: #8d97a8; }
+    .pv-col { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .pv-label { font-size: 13px; color: #8d97a8; display: flex; gap: 8px; }
+    .pv-frame { position: relative; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px #2a323e; }
+    .pv-frame .stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; width: 1280px; height: 720px; }
+    .pv-next { opacity: .9; }
+    .pv-notes { flex: 1; overflow: auto; background: #171c24; border-radius: 8px; padding: 16px 18px; font-size: 20px; line-height: 1.6; box-shadow: 0 0 0 1px #2a323e; }
+    .pv-notes b { color: #ffd479; }
+    .pv-bottom { grid-column: 1 / 3; display: flex; gap: 10px; align-items: center; }
+    .pv-bottom button { font-size: 18px; padding: 10px 22px; border-radius: 8px; border: 1px solid #2a323e; background: #1f2631; color: #e3e8f0; cursor: pointer; }
+    .pv-bottom button:hover { background: #2a3442; }
+    .pv-bottom .big { background: #2563eb; border-color: #2563eb; min-width: 160px; }
+    .pv-step { color: #8d97a8; font-size: 14px; }
+    .pv-wait { grid-column: 1 / 3; text-align: center; padding-top: 30vh; color: #8d97a8; font-size: 18px; }
+  </style>
+</head>
+<body data-theme="dark">
+  <!-- 모든 그림(SVG)이 함께 쓰는 화살표 머리 -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+      <marker id="arr-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-blue"/></marker>
+      <marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-teal"/></marker>
+      <marker id="arr-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-orange"/></marker>
+      <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-red"/></marker>
+      <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-green"/></marker>
+      <marker id="arr-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk-purple"/></marker>
+    </defs>
+  </svg>
+  <div class="pv" id="pv">
+    <div class="pv-wait">강좌 창의 슬라이드 보기를 열면 여기에 표시됩니다…<br><small>(강사용 → 🖼️ 슬라이드)</small></div>
+  </div>
+  <script>document.documentElement.setAttribute('data-theme', 'dark');</script>
+  <script src="js/course.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/ros-msgs.js"></script>
+  <script src="js/ros.js"></script>
+  <script src="js/ros-ui.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/ros-pkgs.js"></script>
+  <script src="js/ros-term.js"></script>
+  <script src="js/pyros.js"></script>
+  <script src="js/py-examples.js"></script>
+  <script src="js/vendor/so101-kinematics.js"></script>
+  <script src="js/vendor/robot-canvas.js"></script>
+  <script src="js/w/core.js"></script>
+  <script src="js/w/mobile.js"></script>
+  <script src="js/w/rviz.js"></script>
+  <script src="js/w/arm.js"></script>
+  <script src="js/w/urdf.js"></script>
+  <script src="js/w/go2.js"></script>
+  <script src="js/w/bridge.js"></script>
+  <script src="js/w/microros.js"></script>
+  <script src="js/w/vision.js"></script>
+  <script src="js/w/concept.js"></script>
+  <script src="js/render.js"></script>
+  <script>
+  (function () {
+    const { esc, expand, buildSlides } = Render;
+    const chan = new BroadcastChannel('r2-deck');
+    let cur = null, slides = [], lastKey = '';
+    const fmt = ms => { const s = Math.floor(ms / 1000); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+    const strip = s => String(s || '').replace(/<[^>]*>/g, '');
+    function slideHtml(l, s) {
+      if (!s) return '<div class="slide kind-summary"><h2>🏁 마지막 슬라이드입니다</h2></div>';
+      const inner = s.kind === 'content' ? `${s.title && s.layout !== 'center' && !s.notitle ? `<h2 class="s-h">${s.title}</h2>` : ''}<div class="s-body">${expand(s.html, l, { slide: true })}</div>` : expand(s.html, l, { slide: true });
+      return `<div class="slide kind-${s.kind}${s.layout ? ' layout-' + s.layout : ''}">${inner}</div>`;
+    }
+    function fit() {
+      document.querySelectorAll('.pv-frame').forEach(f => { const s = f.clientWidth / 1280; f.style.height = 720 * s + 'px'; const st = f.querySelector('.stage'); if (st) st.style.transform = `scale(${s})`; });
+    }
+    function render(m) {
+      const l = Course.lessons[m.lesson]; if (!l) return;
+      if (!cur || cur.id !== l.id) slides = buildSlides(l);
+      cur = l;
+      const key = m.lesson + '@' + m.i;
+      if (key !== lastKey || !document.getElementById('pvNow')) {
+        lastKey = key;
+        const s = slides[m.i], n = slides[m.i + 1];
+        document.getElementById('pv').innerHTML = `
+          <div class="pv-top"><h1>${l.icon || ''} ${esc(l.title)} — ${m.i + 1} / ${slides.length}. ${esc(strip(s.title))}</h1>
+            <span class="pv-now" id="pvWall"></span><span class="pv-clock" id="pvClock" title="클릭: 타이머 시작/일시정지">00:00</span></div>
+          <div class="pv-col"><div class="pv-label">지금 슬라이드 <span class="pv-step" id="pvStep"></span></div><div class="pv-frame" id="pvNow"><div class="stage">${slideHtml(l, s)}</div></div></div>
+          <div class="pv-col"><div class="pv-label">다음 슬라이드</div><div class="pv-frame pv-next"><div class="stage">${slideHtml(l, n)}</div></div>
+            <div class="pv-label">🗒 강의 노트</div><div class="pv-notes">${s.notes || '<span class="muted">(노트 없음)</span>'}</div></div>
+          <div class="pv-bottom"><button data-c="prev">◀ 이전</button><button class="big" data-c="next">다음 ▶</button><button data-c="black">◼ 화면 가림</button><button data-c="timer-reset">↺ 타이머</button></div>`;
+        Widgets.mountAll(document.getElementById('pvNow'));
+        fit();
+      }
+      document.getElementById('pvStep').textContent = m.steps ? `· 단계 ${Math.min(m.step, m.steps)} / ${m.steps}` : '';
+      document.querySelectorAll('#pvNow .step').forEach((el, k) => el.classList.toggle('step-dim', k >= m.step));
+      window._timer = { v: m.timer, at: Date.now() };
+    }
+    chan.onmessage = e => { if (e.data && e.data.type === 'state') render(e.data); };
+    chan.postMessage({ type: 'hello' });
+    document.addEventListener('click', e => {
+      const b = e.target.closest('[data-c]'); if (b) chan.postMessage({ type: 'cmd', cmd: b.dataset.c });
+      if (e.target.id === 'pvClock') chan.postMessage({ type: 'cmd', cmd: 'timer' });
+    });
+    document.addEventListener('keydown', e => {
+      if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); chan.postMessage({ type: 'cmd', cmd: 'next' }); }
+      if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); chan.postMessage({ type: 'cmd', cmd: 'prev' }); }
+      if (e.key === 'b' || e.key === 'B') chan.postMessage({ type: 'cmd', cmd: 'black' });
+    });
+    setInterval(() => {
+      const c = document.getElementById('pvClock'); if (!c) return;
+      // 타이머 값은 강좌 창이 1초마다 보내 준다 (창이 달라 sessionStorage 를 공유하지 않으므로)
+      const v = window._timer ? window._timer.v : 0;
+      c.textContent = fmt(v);
+      document.getElementById('pvWall').textContent = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      chan.postMessage({ type: 'hello' });
+    }, 1000);
+    addEventListener('resize', fit);
+  })();
+  </script>
+</body>
+</html>

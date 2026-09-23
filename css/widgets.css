@@ -1,0 +1,11 @@
+/* ===================================================================
+   위젯 공통 스타일 (각 위젯 그룹의 스타일은 ros.css · w-*.css)
+   =================================================================== */
+.widget .ok { color: var(--ok); } .widget .bad { color: var(--bad); }
+.w-in.bad { border-color: var(--bad); background: var(--bad-soft); }
+.widget label { font-size: 14px; display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.widget .hot { border-color: #f2b705 !important; }
+
+/* 슬라이드 안에서는 크게 */
+.slide .widget .w-body { padding: 14px 20px; }
+.slide .widget .w-help { font-size: 14px; }

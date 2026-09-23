@@ -1,0 +1,202 @@
+/* ===================================================================
+   팔 · TF · URDF · ros2_control 위젯 (js/w/arm.js, js/w/urdf.js)
+   접두어: wt- (TF), wa- (팔 · 제어), wu- (URDF)
+   =================================================================== */
+.wt-root, .wa-root, .wu-root { font-size: 14px; min-width: 0; }
+.wt-root code, .wa-root code, .wu-root code { font-size: .92em; }
+.wt-inwin, .wa-inwin, .wu-inwin { height: 100%; display: flex; flex-direction: column; padding: 10px 12px; box-sizing: border-box; overflow: auto; }
+
+/* 공통: 도구 막대 · 범례 */
+.wt-bar, .wa-bar, .wu-bar { gap: 8px; margin: 0 0 8px; }
+.wt-bar .w-seg button, .wa-bar .w-seg button, .wu-bar .w-seg button { font-size: 12.5px; padding: 5px 9px; }
+.wt-x, .wt-y, .wt-z { font: 800 11px var(--mono); padding: 0 5px; border-radius: 4px; color: #fff; }
+.wt-x { background: var(--c-red); } .wt-y { background: var(--c-green); } .wt-z { background: var(--c-blue); }
+.wt-legend, .wu-legend { position: absolute; left: 8px; top: 8px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--card) 80%, transparent); padding: 3px 6px; border-radius: 7px; pointer-events: none; }
+.wt-ln { font-family: var(--mono); } .wt-ln.st { opacity: .85; }
+.wu-ax { color: var(--c-orange); font-weight: 700; }
+.wt-hint, .wa-hint, .wu-hint { position: absolute; right: 8px; bottom: 6px; font-size: 11px; color: var(--muted); pointer-events: none; }
+.wt-badge { font: 700 10.5px var(--mono); padding: 1px 6px; border-radius: 999px; white-space: nowrap; }
+.wt-badge.st { background: var(--c-gray-soft); color: var(--c-gray); border: 1px dashed var(--c-gray); }
+.wt-badge.dy { background: var(--c-blue-soft); color: var(--c-blue); }
+.wt-term, .wu-pre, .wa-pre { font: 12px/1.5 var(--mono); background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 6px 0; white-space: pre-wrap; word-break: break-all; color: var(--fg); }
+.wt-code { font: 11.5px/1.45 var(--mono); background: var(--card2); border-radius: 8px; padding: 6px 9px; margin: 6px 0 0; white-space: pre-wrap; color: var(--muted); }
+
+/* ------------------------------------------------ TF 놀이터 */
+.wt-main { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 10px; }
+.wt-cvwrap, .wa-view, .wu-cv-wrap { position: relative; border: 1px solid var(--line); border-radius: 10px; background: var(--card2); overflow: hidden; min-width: 0; }
+.wt-cvwrap { height: 380px; }
+.wt-cv, .wa-cv, .wu-cv { display: block; width: 100%; height: 100%; cursor: grab; }
+.wt-cv:active, .wa-cv:active, .wu-cv:active { cursor: grabbing; }
+.wt-side { display: flex; flex-direction: column; min-width: 0; max-height: 380px; }
+.wt-tabs { align-self: flex-start; flex-wrap: wrap; margin-bottom: 6px; }
+.wt-tabs button { font-size: 12.5px; padding: 5px 9px; }
+.wt-pane { overflow: auto; min-height: 0; flex: 1; padding-right: 2px; }
+.wt-fr { border: 1px solid var(--line); border-radius: 9px; padding: 6px 9px; margin-bottom: 6px; background: var(--card); }
+.wt-frh { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; font-size: 13px; }
+.wt-frh b { font-family: var(--mono); font-size: 12.5px; }
+.wt-sl { display: grid !important; grid-template-columns: 44px minmax(0, 1fr) 64px; gap: 6px; align-items: center; font-size: 12.5px !important; width: 100%; margin: 2px 0; }
+.wt-sl span { font: 700 12px var(--mono); color: var(--muted); }
+.wt-sl input { width: 100%; min-width: 0; }
+.wt-sl b { font-size: 12px; text-align: right; }
+.wt-echo-sel { gap: 6px; margin: 0 0 4px; }
+.wt-echo-sel label { font-size: 12.5px; }
+.wt-echo-sel select { font-size: 12.5px; padding: 3px 6px; max-width: 150px; }
+.wt-hlc { color: var(--c-purple); }
+.wt-tree { overflow: auto; }
+.wt-empty { font-size: 13px; color: var(--muted); padding: 14px; line-height: 1.6; }
+/* view_frames 그림 */
+svg.wt-svg { display: block; width: 100%; height: auto; margin: 4px auto; font-family: var(--mono); }
+.wt-node rect { fill: var(--card2); stroke: var(--c-blue); stroke-width: 1.5; }
+.wt-node.root rect { stroke: var(--c-purple); stroke-width: 2; }
+.wt-node.hl rect { fill: var(--c-purple-soft); stroke: var(--c-purple); stroke-width: 2.2; }
+.wt-node text { fill: var(--fg); font-size: 12px; font-weight: 700; dominant-baseline: middle; }
+.wt-edge { fill: none; stroke: var(--d-line); stroke-width: 1.6; }
+.wt-edge.st { stroke-dasharray: 5 4; }
+.wt-edge.hl { stroke: var(--c-purple); stroke-width: 2.6; }
+.wt-ah { fill: var(--d-line); }
+.wt-el { fill: var(--fg); font-size: 10.5px; dominant-baseline: middle; }
+.wt-el.mu { fill: var(--muted); }
+.wt-view { padding: 10px 12px; height: 100%; box-sizing: border-box; overflow: auto; font-size: 14px; }
+.wt-vbar { margin: 0 0 6px; gap: 8px; }
+.wt-det summary { cursor: pointer; font-weight: 700; font-size: 13px; margin-top: 6px; }
+.wt-tbl { font-size: 12.5px; margin: 6px 0; }
+.wt-tbl td, .wt-tbl th { padding: 4px 8px; }
+
+/* ------------------------------------------------ URDF */
+.wu-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 10px; }
+.wu-left, .wu-right { display: flex; flex-direction: column; min-width: 0; }
+.wu-tabs { align-self: flex-start; margin-bottom: 6px; }
+.wu-tabs button { font-size: 12.5px; padding: 5px 10px; }
+.wu-pane { height: 340px; min-height: 0; }
+.wu-pane > .wu-pre { height: 100%; margin: 0; overflow: auto; white-space: pre; word-break: normal; box-sizing: border-box; }
+.wu-ed { display: flex; height: 100%; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--code-bg); }
+.wu-gut { margin: 0; padding: 8px 6px 8px 4px; width: 34px; flex: none; text-align: right; font: 12px/17px var(--mono); color: var(--muted); background: var(--card2); border-right: 1px solid var(--line); overflow: hidden; user-select: none; box-sizing: border-box; }
+.wu-gut b { color: #fff; background: var(--c-red); border-radius: 3px; padding: 0 2px; }
+.wu-ta { flex: 1; min-width: 0; margin: 0; border: 0; outline: none; resize: none; padding: 8px; font: 12px/17px var(--mono); color: var(--fg); background: transparent; white-space: pre; overflow: auto; tab-size: 2; box-sizing: border-box; }
+.wu-msg { margin-top: 6px; font-size: 12.5px; padding: 6px 9px; border-radius: 8px; background: var(--card2); min-height: 20px; line-height: 1.5; }
+.wu-msg.bad { background: var(--bad-soft); border-left: 3px solid var(--bad); }
+.wu-msg.ok { border-left: 3px solid var(--ok); }
+.wu-warn { color: var(--c-yellow); margin-top: 2px; }
+.wu-cv-wrap { height: 300px; }
+.wu-cvbtn { position: absolute; right: 6px; top: 6px; }
+.wu-jsp-h { font-size: 12.5px; margin: 4px 0 2px; }
+.wu-state { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; padding: 4px 8px; border-radius: 8px; font-size: 12px; background: var(--card2); border: 1px solid var(--line); }
+.wu-state.on { border-color: var(--c-green); background: var(--c-green-soft); }
+.wu-state.on .wu-dot { color: var(--c-green); }
+.wu-state.off .wu-dot { color: var(--muted); }
+.wu-state .btn { margin-left: auto; white-space: normal; text-align: left; }
+.wu-jsp { max-height: 150px; overflow: auto; padding-right: 2px; }
+.wu-sl { display: grid !important; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 116px; gap: 6px; align-items: center; width: 100%; font-size: 12px !important; margin: 1px 0; }
+.wu-sl-n { font: 600 12px var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wu-sl-n i { font-style: normal; color: var(--muted); font-size: 10.5px; }
+.wu-sl input { width: 100%; min-width: 0; }
+.wu-sl b { font-size: 11.5px; text-align: right; white-space: nowrap; }
+.wu-slb { margin-top: 4px; }
+.wu-nojs { padding: 6px 0; }
+.wu-info { margin-top: 6px; }
+.wu-jspwin { padding: 10px 12px; height: 100%; overflow: auto; box-sizing: border-box; }
+.wu-jspwin .wu-jsp { max-height: none; }
+.wu-inwin .wu-main { flex: 1; min-height: 0; }
+.wu-inwin .wu-left { min-height: 0; }
+.wu-inwin .wu-pane { flex: 1; height: auto; min-height: 200px; }
+.wu-inwin .wu-right { min-height: 0; }
+.wu-inwin .wu-cv-wrap { flex: 1; height: auto; min-height: 220px; }
+
+/* ------------------------------------------------ SO-ARM101 */
+.wa-main { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 10px; }
+.wa-m-traj .wa-main { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+.wa-view { height: 400px; }
+.wa-side { max-height: 400px; overflow: auto; min-width: 0; padding-right: 2px; }
+.wa-h { font-weight: 800; font-size: 13px; margin: 6px 0 4px; }
+.wa-h:first-child { margin-top: 0; }
+.wa-sl { display: grid !important; grid-template-columns: 112px minmax(0, 1fr) 54px; gap: 6px; align-items: center; width: 100%; font-size: 12px !important; margin: 2px 0; }
+.wa-sl span { display: flex; flex-direction: column; line-height: 1.15; }
+.wa-sl span b { font: 700 11.5px var(--mono); }
+.wa-sl span i { font-style: normal; font-size: 10.5px; color: var(--muted); }
+.wa-sl input { width: 100%; min-width: 0; }
+.wa-sl b.w-out { text-align: right; font-size: 12px; }
+.wa-tcp { margin-top: 8px; padding: 6px 8px; border-radius: 8px; background: var(--card2); line-height: 1.5; }
+.wa-status { position: absolute; left: 8px; top: 8px; font-size: 12px; padding: 3px 8px; border-radius: 7px; background: color-mix(in srgb, var(--card) 85%, transparent); border: 1px solid var(--line); pointer-events: none; }
+.wa-status.on { border-color: var(--c-green); color: var(--c-green); }
+.wa-log { margin-top: 8px; font: 11.5px/1.5 var(--mono); background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; min-height: 36px; max-height: 110px; overflow: auto; }
+.wa-log .ok { color: var(--ok); } .wa-log .bad { color: var(--bad); } .wa-log .muted { color: var(--muted); }
+.wa-xyz { gap: 8px; }
+.wa-xyz label { font: 600 12.5px var(--mono); }
+.wa-xyz input { width: 68px; font-size: 13px; padding: 4px 6px; }
+.wa-plan { margin: 6px 0; padding: 6px 8px; border-radius: 8px; background: var(--card2); line-height: 1.5; }
+.wa-dtbl, .wa-ttbl { font-size: 11.5px; margin: 6px 0; }
+.wa-dtbl td, .wa-dtbl th { padding: 2px 8px; }
+.wa-tw { overflow-x: auto; }
+.wa-ttbl td, .wa-ttbl th { padding: 2px 3px; text-align: center; font-family: var(--mono); }
+.wa-ttbl th { font-size: 10.5px; }
+.wa-num { width: 50px; font-size: 11.5px; padding: 2px 3px; text-align: right; }
+.wa-plot { display: block; width: 100%; height: 150px; margin-top: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--card2); }
+.wa-cmd summary { cursor: pointer; font-size: 12.5px; margin-top: 6px; }
+.wa-cmd .wa-pre { font-size: 11px; }
+
+/* ------------------------------------------------ ros2_control 한 관절 */
+.wa-cmain { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 10px; }
+.wa-joint { display: block; width: 100%; height: 210px; border: 1px solid var(--line); border-radius: 10px; background: var(--card2); }
+.wa-cplot { position: relative; min-width: 0; }
+.wa-plot2 { display: block; width: 100%; height: 210px; border: 1px solid var(--line); border-radius: 10px; background: var(--card2); }
+.wa-plegend { position: absolute; right: 42px; top: 6px; display: flex; gap: 8px; pointer-events: none; }
+.lg-r { color: var(--c-red); } .lg-y { color: var(--c-blue); } .lg-u { color: var(--c-orange); }
+.wa-csl { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 4px 14px; margin: 8px 0 4px; }
+.wa-sl2 { display: grid !important; grid-template-columns: 96px minmax(0, 1fr) 50px; gap: 6px; align-items: center; font-size: 12.5px !important; }
+.wa-sl2 span { font-weight: 700; line-height: 1.15; }
+.wa-sl2 span i { display: block; font: 400 10px var(--mono); color: var(--muted); font-style: normal; }
+.wa-sl2 input { width: 100%; min-width: 0; }
+.wa-sl2 b { text-align: right; font-size: 12px; }
+div.wa-sl2 { display: block !important; grid-column: 1 / -1; }
+.wa-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 4px; margin-top: 6px; font-size: 12px; }
+.wa-fb { border: 1.5px solid var(--line); border-radius: 9px; padding: 5px 8px; background: var(--card); line-height: 1.45; min-width: 0; }
+.wa-fb.src { border-color: var(--c-teal); } .wa-fb.cm { border-color: var(--c-purple); background: var(--c-purple-soft); flex: 1 1 200px; }
+.wa-fb.ctl { border-color: var(--c-blue); margin-top: 4px; background: var(--card); }
+.wa-fb.hw { border-color: var(--c-orange); flex: 1 1 190px; } .wa-fb.mot { border-color: var(--c-gray); }
+.wa-ft { font-weight: 800; font-size: 12px; }
+.wa-ft .muted { font-weight: 400; }
+.wa-fa { align-self: center; color: var(--muted); font-weight: 800; }
+.wa-rw { display: flex; gap: 4px; margin: 2px 0; }
+.wa-rw span { font: 600 10.5px var(--mono); background: var(--card); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
+.wa-if { font-size: 11.5px; }
+.wa-if.cmd b { color: var(--c-orange); } .wa-if.st b { color: var(--c-blue); }
+.wa-fback { flex-basis: 100%; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+
+/* ------------------------------------------------ 창 안에서 */
+.wt-inwin .wt-main, .wa-inwin .wa-main { flex: 1; min-height: 0; }
+.wt-inwin .wt-cvwrap, .wa-inwin .wa-view { height: auto; min-height: 260px; }
+.wt-inwin .wt-side, .wa-inwin .wa-side { max-height: none; min-height: 0; overflow: auto; }
+
+/* ------------------------------------------------ 슬라이드 안에서는 낮게 */
+.slide .widget .wt-cvwrap, .slide .widget .wa-view { height: 330px; }
+.slide .widget .wt-side, .slide .widget .wa-side { max-height: 330px; }
+.slide .widget .wu-pane { height: 250px; }
+.slide .widget .wu-cv-wrap { height: 210px; }
+.slide .widget .wu-jsp { max-height: 100px; }
+.slide .widget .wa-log { max-height: 56px; }
+.slide .widget .wa-joint, .slide .widget .wa-plot2 { height: 170px; }
+.slide .widget .wa-plot { height: 110px; }
+.slide .wt-root, .slide .wa-root, .slide .wu-root { font-size: 14px; }
+
+/* ------------------------------------------------ 좁은 화면 */
+@media (max-width: 760px) {
+  .wt-main, .wu-main, .wa-main, .wa-m-traj .wa-main { grid-template-columns: minmax(0, 1fr); }
+  .wt-cvwrap, .wa-view { height: 290px; }
+  .wt-side, .wa-side { max-height: none; }
+  .wu-pane { height: 260px; }
+  .wu-cv-wrap { height: 260px; }
+  .wu-sl { grid-template-columns: minmax(0, 110px) minmax(0, 1fr) 96px; }
+  .wa-cmain { grid-template-columns: minmax(0, 1fr); }
+  .wa-joint { height: 180px; max-width: 260px; margin: 0 auto; }
+  .wa-fa { transform: rotate(90deg); flex-basis: 100%; text-align: center; }
+  .wa-fb { flex: 1 1 100%; }
+  .wa-plegend { right: 8px; flex-wrap: wrap; }
+}
+@media (max-width: 420px) {
+  .wt-bar .w-seg button, .wa-bar .w-seg button, .wu-bar .w-seg button { padding: 4px 6px; font-size: 11.5px; }
+  .wu-sl { grid-template-columns: minmax(0, 1fr) 90px; }
+  .wu-sl-n { grid-column: 1 / -1; }
+  .wa-sl { grid-template-columns: 90px minmax(0, 1fr) 46px; }
+  .wa-sl2 { grid-template-columns: 80px minmax(0, 1fr) 44px; }
+  .wa-csl { grid-template-columns: minmax(0, 1fr); }
+}

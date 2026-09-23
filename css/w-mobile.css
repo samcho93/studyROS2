@@ -1,0 +1,103 @@
+/* ===================================================================
+   모바일 로봇 위젯 (bot · odom) — 접두어 wm-
+   RViz2-lite (rviz) — 접두어 wr-
+   =================================================================== */
+
+/* ---------------------------------------------- bot (Gazebo-lite) */
+.wm-bot { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 14px; }
+.wm-bot.wm-win { height: 100%; padding: 8px; box-sizing: border-box; }
+.wm-bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+.wm-bar .w-seg button { font-size: 12.5px; padding: 5px 9px; }
+.wm-bar .btn.tiny { font-size: 12.5px; }
+.wm-sp { flex: 1; }
+.wm-tools { min-height: 28px; }
+.wm-chk { font-size: 12.5px !important; color: var(--muted); gap: 4px !important; cursor: pointer; user-select: none; }
+.wm-chk input { margin: 0; }
+.wm-stage { position: relative; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card2); outline: none; min-height: 200px; }
+.wm-stage:focus-visible, .wm-stage:focus { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); }
+.wm-win .wm-stage { flex: 1; height: auto; min-height: 0; }
+.wm-cv { display: block; width: 100%; height: 100%; }
+.wm-kbd { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); font-size: 11.5px; color: var(--muted); background: color-mix(in srgb, var(--card) 85%, transparent); padding: 2px 10px; border-radius: 999px; pointer-events: none; transition: opacity .2s; white-space: nowrap; display: none; }
+.wm-stage.has-pad .wm-kbd { display: block; }
+.wm-stage:focus .wm-kbd { opacity: 0; }
+
+/* 조종 패드 (bot · rviz 공용) */
+.wm-pad { position: absolute; right: 10px; bottom: 30px; display: grid; grid-template-columns: repeat(3, 34px); grid-template-rows: repeat(3, 34px); gap: 3px; z-index: 2; opacity: .88; touch-action: none; user-select: none; -webkit-user-select: none; }
+.wm-pad:hover { opacity: 1; }
+.wm-pad button { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 8px; font-size: 13px; cursor: pointer; padding: 0; box-shadow: 0 1px 3px rgba(0, 0, 0, .15); touch-action: none; }
+.wm-pad button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.wm-pad [data-k="f"] { grid-column: 2; grid-row: 1; }
+.wm-pad [data-k="l"] { grid-column: 1; grid-row: 2; }
+.wm-pad [data-k="x"] { grid-column: 2; grid-row: 2; color: var(--c-red); }
+.wm-pad [data-k="r"] { grid-column: 3; grid-row: 2; }
+.wm-pad [data-k="b"] { grid-column: 2; grid-row: 3; }
+
+.wm-status { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--fg); min-height: 20px; }
+.wm-status > span { white-space: nowrap; }
+.wm-status .bad, .wm-nav.bad { color: var(--bad); }
+.wm-nav.ok { color: var(--ok); }
+.wm-nav.warn { color: var(--c-orange); }
+.wm-status .muted { color: var(--muted); }
+.wm-help { margin-top: 2px; line-height: 1.55; }
+.wm-help code { font-size: 11.5px; word-break: break-all; }
+
+/* ---------------------------------------------- odom (드리프트 실험) */
+.wm-odom-main { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(200px, 1fr); gap: 12px; align-items: start; }
+.wm-odom-stage { position: relative; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--card2); }
+.wm-odom-stage canvas { display: block; width: 100%; height: 100%; }
+.wm-odom-ctl { display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; }
+.wm-odom-ctl label { display: grid !important; grid-template-columns: 1fr auto; gap: 2px 8px !important; font-size: 13px !important; }
+.wm-odom-ctl label span { grid-column: 1 / 3; font-weight: 600; }
+.wm-odom-ctl input[type=range] { width: 100%; accent-color: var(--accent); }
+.wm-odom-ctl label b { font: 700 12.5px var(--mono); min-width: 52px; text-align: right; }
+.wm-odom-read { background: var(--card2); border-radius: 8px; padding: 8px 10px; font-size: 13px; line-height: 1.6; min-height: 70px; }
+.wm-odom-read .bad { color: var(--bad); }
+.wm-laps { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 2px; }
+.wm-laps span { font: 600 11.5px var(--mono); background: var(--c-red-soft); color: var(--c-red); border-radius: 6px; padding: 1px 6px; }
+
+@media (max-width: 700px) {
+  .wm-odom-main { grid-template-columns: 1fr; }
+  .wm-pad { grid-template-columns: repeat(3, 38px); grid-template-rows: repeat(3, 38px); bottom: 26px; }
+}
+.slide .wm-bot, .slide .wr-root { font-size: 14px; }
+.slide .wm-help { font-size: 13px; }
+.slide .wm-odom .w-help { font-size: 13.5px; }
+
+/* ---------------------------------------------- RViz2-lite */
+.wr-root { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 13.5px; }
+.wr-root.wr-win { height: 100%; padding: 8px; box-sizing: border-box; }
+.wr-top { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.wr-top .w-seg button { font-size: 12.5px; padding: 5px 9px; }
+.wr-sp { flex: 1; }
+.wr-main { position: relative; display: flex; gap: 8px; min-height: 0; min-width: 0; }
+.wr-win .wr-main { flex: 1; }
+.wr-side { width: 232px; flex: none; border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 6px 8px; overflow: auto; font-size: 12.5px; box-sizing: border-box; }
+.wr-sec { font-size: 11px; font-weight: 800; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; margin: 4px 0 4px; }
+.wr-ff { display: flex !important; align-items: center; gap: 6px; font-size: 12.5px !important; margin-bottom: 6px; }
+.wr-ff select, .wr-topic { font: 12px var(--mono); padding: 2px 4px; border-radius: 6px; border: 1px solid var(--line); background: var(--card2); color: var(--fg); min-width: 0; max-width: 100%; }
+.wr-ff select { flex: 1; }
+.wr-disp { padding: 4px 4px 5px; border-radius: 7px; border-bottom: 1px dashed var(--line); }
+.wr-disp:last-child { border-bottom: 0; }
+.wr-disp > label { display: flex !important; align-items: center; gap: 5px !important; font-size: 12.5px !important; font-weight: 600; cursor: pointer; flex-wrap: nowrap !important; }
+.wr-disp > label input { margin: 0; }
+.wr-disp:not(.on) > label { color: var(--muted); font-weight: 500; }
+.wr-ic { width: 16px; text-align: center; font-size: 12px; }
+.wr-dot { margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: var(--c-gray); flex: none; }
+.wr-dot.ok { background: var(--ok); } .wr-dot.warn { background: var(--c-orange); } .wr-dot.err { background: var(--bad); } .wr-dot.off { background: transparent; border: 1px solid var(--line); }
+.wr-topic { display: block; width: 100%; margin: 3px 0 0 21px; width: calc(100% - 21px); }
+.wr-disp:not(.on) .wr-topic { display: none; }
+.wr-dst { font-size: 11px; color: var(--muted); margin-left: 21px; line-height: 1.35; word-break: keep-all; }
+.wr-disp:not(.on) .wr-dst { display: none; }
+.wr-view { position: relative; flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; outline: none; min-height: 220px; background: #23272e; }
+.wr-view:focus { border-color: var(--accent); }
+.wr-win .wr-view { height: auto; }
+.wr-cv { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+.wr-view:focus .wr-cv, .wr-view:focus-within .wr-cv { touch-action: none; }
+.wr-status { display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 12px; color: var(--muted); min-height: 18px; }
+.wr-status .ok { color: var(--ok); } .wr-status .bad { color: var(--bad); }
+/* 넓은 화면: ☰ 로 목록 접기 · 좁은 화면: ☰ 로 목록 펼치기(그림 위에 겹침) */
+.wr-root:not(.narrow).side-open .wr-side { display: none; }
+.wr-root.narrow .wr-side { position: absolute; left: 6px; top: 6px; z-index: 3; max-height: calc(100% - 12px); width: min(250px, calc(100% - 12px)); box-shadow: var(--shadow); display: none; }
+.wr-root.narrow.side-open .wr-side { display: block; }
+.wr-root .wm-pad { bottom: 12px; }
+.slide .wm-help { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
