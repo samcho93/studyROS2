@@ -226,3 +226,34 @@ a.card.sister:hover { transform: translateY(-2px); }
 @keyframes tdockFlash { 0%, 60% { background: #1f4d2a; } 100% { background: #151c24; } }
 @media (max-width: 700px) { .tdock-hint { display: none; } }
 body.in-slides .tdock:not(.open) .tdock-hint { display: none; }
+.tdock-btn.wide { width: auto; padding: 0 7px; font-size: 13px; }
+.tdock-tab.k-py.on { border-color: #ffcb6b; }
+
+/* 도크 안 파이썬 실습기: 편집기 | 출력 나란히 */
+.tdock-pane.py { background: var(--card); }
+.tdock-py { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 6px 8px; gap: 6px !important; }
+.tdock-py .pl-bar { flex: none; }
+.tdock-py .pl-grid { flex: 1; min-height: 0; display: flex; }
+.tdock-py .pl-left { flex: 1; min-height: 0; flex-direction: row; }
+.tdock-py .pl-ed { flex: 1.5; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+.tdock-py .pl-ed .CodeMirror, .tdock-py .pl-ed .py-ta { height: 100% !important; flex: 1; }
+.tdock-py .pl-out { flex: 1; min-width: 0; height: auto; }
+.tdock-py .pl-desc { display: none; }
+@media (max-width: 700px) { .tdock-py .pl-left { flex-direction: column; } }
+
+/* ---------------- 오른쪽 고정 화면 (사이드 도크) */
+.sdock { flex: none; display: none; position: relative; flex-direction: column; border-left: 1px solid var(--line); background: var(--card); min-width: 280px; max-width: 70%; }
+.sdock.open { display: flex; }
+.sdock-grip { position: absolute; left: -4px; top: 0; bottom: 0; width: 8px; cursor: ew-resize; z-index: 3; touch-action: none; }
+.sdock-head { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-bottom: 1px solid var(--line); background: var(--card2); }
+.sdock-sel { font-size: 13px; padding: 3px 8px; }
+.sdock-btn { border: 0; background: transparent; color: var(--fg); width: 28px; height: 26px; border-radius: 6px; cursor: pointer; }
+.sdock-btn:hover { background: var(--bad); color: #fff; }
+.sdock-body { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; }
+.sdock-view { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 8px; }
+.sdock-view.ts-host .ts-stage { flex: 1; min-height: 0; align-items: flex-start; }
+.side-btn.on { background: var(--accent-soft); border-color: var(--accent); }
+@media (max-width: 900px) {
+  .sdock.open { position: absolute; right: 0; top: 0; bottom: 0; z-index: 20; width: min(92vw, 420px) !important; box-shadow: -8px 0 24px rgba(0, 0, 0, .25); }
+  .doc-view { position: relative; }
+}

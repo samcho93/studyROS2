@@ -402,12 +402,18 @@
     function doRun() {
       if (run) { run.stop(); }
       outEl.innerHTML = '';
-      print('$ python3 ' + (o.ex || 'main') + '.py', 'cmd');
+      print('$ python3 ' + (o.file || o.ex || 'main') + '.py', 'cmd');
       runBtn.disabled = true; stopBtn.disabled = false; st.textContent = '실행 중…';
-      const r = run = PyROS.run(ed.get(), { filename: (o.ex || 'main') + '.py', out: s => print(s), err: s => print(s, 'err'), onStatus: s => { st.textContent = s || '실행 중…'; if (s) print('⏳ ' + s, 'muted'); } });
+      const r = run = PyROS.run(ed.get(), { filename: (o.file || o.ex || 'main') + '.py', out: s => print(s), err: s => print(s, 'err'), onStatus: s => { st.textContent = s || '실행 중…'; if (s) print('⏳ ' + s, 'muted'); } });
       r.done.then(res => { if (run === r) { run = null; runBtn.disabled = false; stopBtn.disabled = true; st.textContent = { ok: '✓ 끝', error: '✗ 오류', stopped: '■ 멈춤', killed: '■ 강제 종료' }[res] || res; } });
     }
     runBtn.onclick = doRun;
+    // 하단 도크 등에서 코드 넣고 실행할 때 쓰는 손잡이
+    el._pylab = {
+      setCode(code) { ed.set(code); try { localStorage.setItem(key, code); } catch (_) {} },
+      getCode: () => ed.get(), run: doRun, stop: () => run && run.stop(),
+      get running() { return !!run; }
+    };
     stopBtn.onclick = () => run && run.stop();
     outEl.addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'c' && !getSelection().toString()) run && run.stop(); });
     el.querySelector('[data-a=reset]').onclick = () => { const e2 = EX[el.querySelector('.pl-ex').value]; if (e2 && confirm('예제 원래 코드로 되돌릴까요? (고친 내용은 사라집니다)')) ed.set(e2.code); };

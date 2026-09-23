@@ -244,7 +244,7 @@
       const run = pre.dataset.run;
       const bar = document.createElement('div'); bar.className = 'code-run';
       bar.innerHTML = (run === 'sh' ? '<button class="btn tiny primary" data-coderun="sh" title="이 페이지의 터미널에서 실행">▶ 터미널에서 실행</button>' : '') +
-        (run === 'py' ? `<button class="btn tiny primary" data-coderun="py" data-with="${esc(pre.dataset.with || 'graph')}" title="파이썬 실습기 창에서 실행">▶ 실습기에서 실행</button>` : '') +
+        (run === 'py' ? `<button class="btn tiny primary" data-coderun="py" data-with="${esc(pre.dataset.with || 'graph')}" title="아래 실습 도크의 🐍 파이썬 탭에서 실행 (결과 화면은 오른쪽에 고정)">▶ 파이썬 실행</button>` : '') +
         '<button class="btn tiny ghost" data-coderun="copy">⧉ 복사</button>';
       pre.after(bar);
     });
@@ -364,7 +364,7 @@
     if (cr) {
       const pre = cr.parentElement.previousElementSibling; const code = pre ? pre.textContent : '';
       if (cr.dataset.coderun === 'sh') Term.runInTerminal(code.replace(/^\s*\$\s?/gm, ''));
-      else if (cr.dataset.coderun === 'py') RosUI.openView('pylab', { viewOpts: { code, with: cr.dataset.with || 'graph', key: 'code:' + state.id } });
+      else if (cr.dataset.coderun === 'py') { if (!(window.TermDock && TermDock.runPy(code, cr.dataset.with || 'graph'))) RosUI.openView('pylab', { viewOpts: { code, with: cr.dataset.with || 'graph', key: 'code:' + state.id } }); }
       else if (cr.dataset.coderun === 'copy' && navigator.clipboard) navigator.clipboard.writeText(code).then(() => toast('코드를 복사했습니다'));
       return;
     }
