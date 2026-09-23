@@ -2,6 +2,6 @@
    (document.write 는 문서를 읽는 중에만 쓰므로 다음 <script> 보다 먼저 실행된다) */
 (function () {
   Course.order().filter(id => /^ch\d+$/.test(id)).forEach(id => {
-    document.write('<script src="lessons/' + id + '.js"><\/script>');
+    document.write('<script src="lessons/' + id + '.js?v=' + (window.ASSET_V || '') + '"><\/script>');
   });
 })();

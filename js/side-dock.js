@@ -12,7 +12,8 @@
   let st = { open: false, view: 'turtlesim', w: 440 };
   try { Object.assign(st, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (_) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (_) {} };
-  let el = null, clean = null, shown = null;
+  let el = null, clean = null, shown = null, userClosed = null;
+  const chap = () => location.hash.split(':')[0];
 
   function build() {
     const dv = document.getElementById('docView');
@@ -25,7 +26,7 @@
       <div class="sdock-body"></div>`;
     dv.appendChild(el);
     el.querySelector('.sdock-sel').onchange = e => show(e.target.value);
-    el.querySelector('[data-a=close]').onclick = () => setOpen(false);
+    el.querySelector('[data-a=close]').onclick = () => { userClosed = chap(); setOpen(false); };
     const grip = el.querySelector('.sdock-grip');
     grip.addEventListener('pointerdown', e => {
       grip.setPointerCapture(e.pointerId);
@@ -39,7 +40,7 @@
     if (vs && !document.getElementById('sideBtn')) {
       const b = document.createElement('button');
       b.id = 'sideBtn'; b.className = 'btn ghost small side-btn'; b.title = '오른쪽에 turtlesim 등 화면 고정 (장을 옮겨도 유지)'; b.textContent = '🐢 화면';
-      b.onclick = () => setOpen(!st.open);
+      b.onclick = () => { if (st.open) userClosed = chap(); else userClosed = null; setOpen(!st.open); };
       vs.parentNode.insertBefore(b, vs);
     }
     apply();
@@ -73,6 +74,8 @@
   /** 화면을 열고 (필요하면) 종류를 바꾼다 */
   function open(view) { setOpen(true, view && view !== shown ? view : null); }
 
-  window.SideDock = { build, open, close: () => setOpen(false), show, get view() { return shown; }, get isOpen() { return st.open; }, VIEWS };
+  /** 본문 카드가 보일 때 자동으로 열기 — 이 장에서 사용자가 직접 닫았으면 열지 않음 */
+  function autoOpen(view) { if (userClosed && userClosed === chap()) return; if (!st.open || shown !== view) open(view); }
+  window.SideDock = { build, open, autoOpen, close: () => setOpen(false), show, get view() { return shown; }, get isOpen() { return st.open; }, VIEWS };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
 })();

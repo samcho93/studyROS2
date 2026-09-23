@@ -70,6 +70,7 @@ js/py-examples.js      파이썬 예제 모음
 js/ros-ui.js · js/widgets.js · js/w/*.js   떠 있는 창 · 위젯 (core, mobile, rviz, arm, urdf, go2, bridge, microros, vision, concept)
 lessons/chNN.js        장별 콘텐츠        tools/validate.mjs  콘텐츠 검증 (--net: 영상 확인)
 tools/export_ros2_ws.mjs  예제를 ros2_ws 패키지로 내보내기
+(배포할 때 index.html · presenter.html 의 ?v= 와 window.ASSET_V 를 올리면 브라우저 캐시가 갱신됩니다)
 ros2_ws/               실제 ROS 2 예제 패키지
 docs/LESSON_GUIDE.md   콘텐츠 작성 가이드   docs/DEV_WIDGETS.md  위젯 개발 가이드
 ```

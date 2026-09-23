@@ -257,3 +257,16 @@ body.in-slides .tdock:not(.open) .tdock-hint { display: none; }
   .sdock.open { position: absolute; right: 0; top: 0; bottom: 0; z-index: 20; width: min(92vw, 420px) !important; box-shadow: -8px 0 24px rgba(0, 0, 0, .25); }
   .doc-view { position: relative; }
 }
+
+/* ---------------- 실습 카드 (문서 보기의 터미널 · turtlesim · 실습 · 파이썬 자리) */
+.widget.cw { border-style: dashed; box-shadow: none; background: linear-gradient(135deg, var(--accent-soft), var(--card) 70%); }
+.cw-card { display: flex; gap: 12px; padding: 12px 14px; align-items: flex-start; }
+.cw-ic { font-size: 26px; line-height: 1; flex: none; }
+.cw-main { flex: 1; min-width: 0; }
+.cw-t { font-weight: 800; font-size: 15px; margin-bottom: 2px; }
+.cw-d { font-size: 13.5px; color: var(--muted); }
+.cw-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+.cw .term-chip { background: #1d2733; }
+.cw-code { width: 100%; margin-top: 2px; }
+.cw-code summary { cursor: pointer; font-size: 13px; color: var(--accent); }
+.cw-code pre { margin: 6px 0 0; max-height: 320px; overflow: auto; }

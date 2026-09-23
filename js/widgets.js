@@ -29,5 +29,5 @@
     const list = [root, ...root.querySelectorAll('*')].filter(e => typeof e._cleanup === 'function');
     list.forEach(e => { const f = e._cleanup; e._cleanup = null; try { f(); } catch (err) { console.error(err); } });
   }
-  window.Widgets = { register, mountAll, unmountAll, head, esc, get list() { return Object.keys(W); }, meta: META };
+  window.Widgets = { register, mountAll, unmountAll, get: name => W[name], head, esc, get list() { return Object.keys(W); }, meta: META };
 })();
