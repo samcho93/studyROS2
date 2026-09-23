@@ -26,7 +26,7 @@
 
 | 구성 | 내용 |
 |---|---|
-| 🖥️ **터미널** | `ros2 run/launch`, `node/topic/service/action/param/interface/pkg/bag/lifecycle/doctor`, `colcon build`, `source`, 가상 파일 시스템(`~/ros2_ws`), `nano` 편집기 창, Tab 자동 완성, Ctrl+C |
+| 🖥️ **터미널** | 화면 하단 고정 터미널(탭으로 여러 개, Ctrl+` 펼치기 · Ctrl+Shift+` 새 탭, 장을 옮겨도 유지) · `ros2 run/launch`, `node/topic/service/action/param/interface/pkg/bag/lifecycle/doctor`, `colcon build`, `source`, 가상 파일 시스템(`~/ros2_ws`), `nano` 편집기 창, Tab 자동 완성, Ctrl+C |
 | 🐍 **rclpy** | Web Worker 안의 Pyodide 에서 rclpy 호환 라이브러리로 실행 (노드 · 토픽 · 서비스 · 액션 · 파라미터 · 타이머 · QoS · tf2_ros). Chrome/Edge 는 JSPI 로 `rclpy.spin`, `time.sleep`, `spin_until_future_complete` 가 실제처럼 블로킹 |
 | 🐢 **시뮬레이터** | turtlesim(서비스 · 액션 · 파라미터 포함), 차동 구동 로봇 + LiDAR(SLAM · Nav2 라이트), SO-ARM101(ros2_control · MoveIt 방식), Go2(보행 · MuJoCo 연동), 가상 ESP32(micro-ROS), 카메라 색 추적(OpenCV) |
 | 🧰 **도구** | rqt_graph, rqt_plot, rqt_console, rqt_topic, rqt_reconfigure, rqt_service_caller, RViz 라이트, TF 트리(view_frames), URDF 뷰어, rosbag2, rosbridge(실제 ROS 2 연결) |

@@ -365,7 +365,7 @@ ament_package()
       el.addEventListener('click', e => { if (!window.getSelection().toString() && !e.target.closest('a,button')) (this.fg && this.fg.keys ? this.out : this.inp).focus({ preventScroll: true }); activeTerm = this; });
       el.addEventListener('focusin', () => { activeTerm = this; });
       this.stopBtn.onclick = () => this.interrupt();
-      terms.add(this); activeTerm = this;
+      terms.add(this); this.dock = !!this.opts.dock;
       if (!this.opts.quiet) this.print(`<span class="rt-welcome">🐢 ROS 2 Jazzy 브라우저 터미널</span>  <span class="muted">— <b>help</b> 로 명령 목록, <kbd>Tab</kbd> 자동 완성, <kbd>↑</kbd> 이전 명령, <kbd>Ctrl</kbd>+<kbd>C</kbd> 멈추기</span>`, 'html');
     }
     get prompt() { const d = this.cwd.startsWith(HOME) ? '~' + this.cwd.slice(HOME.length) : this.cwd; return `<span class="rt-u">user@ros2</span>:<span class="rt-d">${esc(d)}</span>$ `; }
@@ -419,6 +419,7 @@ ament_package()
       const trimmed = line.trim();
       if (!trimmed) return Promise.resolve();
       if (this.fg) { this.print('(다른 명령이 실행 중입니다. Ctrl+C 로 멈춘 뒤 다시 입력하세요)', 'warn'); return Promise.resolve(); }
+      this.lastCmd = trimmed;
       if (this.hist[this.hist.length - 1] !== trimmed) { this.hist.push(trimmed); if (this.hist.length > 200) this.hist.shift(); try { localStorage.setItem(HIST_KEY, JSON.stringify(this.hist)); } catch (_) {} }
       this.hi = this.hist.length;
       // && 연결 · 주석
@@ -1032,11 +1033,16 @@ Commands:
   function create(el, opts) { return new Terminal(el, opts); }
   /** 코드 블록의 "▶ 터미널에서 실행" 버튼 → 활성 터미널 (없으면 새 창) */
   function runInTerminal(text) {
-    let t = activeTerm && activeTerm.el.isConnected ? activeTerm : [...terms].reverse().find(x => x.el.isConnected);
-    if (!t) { RosUI.openView('term', { run: text }); return; }
-    t.el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    if (t.fg) { t.print('(실행 중인 명령을 멈추고 새 명령을 실행합니다)', 'muted'); t.interrupt(); }
-    t.execScript(text);
+    // 화면에 보이는 (직접 클릭해서 쓰던) 페이지 안 터미널이 있으면 거기서, 아니면 하단 고정 터미널에서
+    const t = activeTerm && activeTerm.el.isConnected ? activeTerm : null;
+    const visible = x => { const r = x.el.getBoundingClientRect(); return r.height > 40 && r.bottom > 60 && r.top < innerHeight - 60; };
+    if (t && !t.dock && visible(t)) {
+      if (t.fg) { t.print('(실행 중인 명령을 멈추고 새 명령을 실행합니다)', 'muted'); t.interrupt(); }
+      t.execScript(text);
+      return;
+    }
+    if (window.TermDock && TermDock.run(text)) return;
+    RosUI.openView('term', { run: text });
   }
   RosUI.registerView('term', (el, o) => {
     el.classList.add('rterm-host');
